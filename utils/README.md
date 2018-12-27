@@ -11,3 +11,5 @@ GATEWAY=172.16.1.1
 DNS1=8.8.8.8
 DNS2=8.8.4.4
 ```
+
+kubeadm token create --print-join-command

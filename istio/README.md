@@ -44,5 +44,5 @@ kubectl get virtualservice -o yaml
 * Bookinfo sample delete
 ```
 kubectl delete -f samples/bookinfo/platform/kube/bookinfo.yaml
-kubectl delete -f install/kubernetes/istio-demo-auth.yaml
+// kubectl delete -f install/kubernetes/istio-demo-auth.yaml
 ```

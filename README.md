@@ -16,7 +16,7 @@ Setup steps:
 2. Istio
 3. Rook
 ---
-Setup kubectl
+Install kubectl
 ```
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
@@ -32,6 +32,16 @@ yum install -y kubectl
 Copy admin.conf from master node
 ```
 mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo scp root@172.16.1.211:/etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 ```  
+
+python 3 install
+```
+sudo yum install centos-release-scl
+sudo yum install rh-python36
+python --version
+scl enable rh-python36 bash
+python --version
+sudo yum groupinstall 'Development Tools'
+```

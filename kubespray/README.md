@@ -28,14 +28,42 @@ sudo visudo
 Install packages
 Note. Do not upgrade pip "'pip install --upgrade pip'"
 ```
-sudo yum install -y ansible 
-sudo yum install -y epel-release python-pip
-sudo pip install Jinja
-sudo yum install -y python-netaddr vim wget
+// sudo yum install -y ansible 
+sudo yum -y install epel-release
+sudo yum -y install python-pip
+// sudo pip install Jinja
+// sudo yum install -y python-netaddr vim wget
 ```
 Create cluster.inventory file:
 ```
 vim cluster.inventory
+
+declare -a IPS=(172.16.1.211 172.16.1.212 172.16.1.213 172.16.1.214 172.16.1.215 172.16.1.216)
+CONFIG_FILE=inventory/appcluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+
+***
+
+ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+  'sudo sysctl -w net.ipv4.ip_forward=1'
+
+ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+  'sudo systemctl stop firewalld && \
+   sudo systemctl disable firewalld && \
+   sudo systemctl mask firewalld && \
+   sudo yum remove -y firewalld'
+
+ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+  'SWAP=$(cat /etc/fstab | grep swap | sed "s/ .*//") && \
+   sudo swapoff -v $SWAP && \
+   sudo sed -i "/swap/d" /etc/fstab && \
+   sudo rm $SWAP'
+
+***
+
+ansible-playbook -i inventory/appcluster/hosts.ini cluster.yml -b -v \
+  --private-key=~/.ssh/private_key
+
+
 ---
 master01 ansible_ssh_host=172.16.1.211
 master02 ansible_ssh_host=172.16.1.212

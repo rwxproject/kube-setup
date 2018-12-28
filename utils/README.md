@@ -13,3 +13,6 @@ DNS2=8.8.4.4
 ```
 
 kubeadm token create --print-join-command
+
+kubectl cordon node2
+kubectl uncordon node2

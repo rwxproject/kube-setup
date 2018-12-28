@@ -16,3 +16,6 @@ kubeadm token create --print-join-command
 
 kubectl cordon node2
 kubectl uncordon node2
+
+linux network tools
+https://github.com/nicolaka/netshoot

@@ -41,8 +41,104 @@ kubectl get virtualservice -o yaml
 kubectl apply -f samples/bookinfo/networking/virtual-service-reviews-50-v3.yaml
 kubectl get virtualservice -o yaml
 ```
+Istio Gateway
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "httpbin.example.com"
+EOF
+```
+Istio VirtualService
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "httpbin.example.com"
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /status
+    - uri:
+        prefix: /delay
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+EOF
+```
+Httpbin Service and Deployment
+```
+kubectl apply -f httpbin.yaml
+```
+Test
+```
+curl -I -HHost:httpbin.example.com http://$INGRESS_HOST:$INGRESS_PORT/status/200
+curl -I -HHost:httpbin.example.com http://$INGRESS_HOST:$INGRESS_PORT/headers
+```
+
+```
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - httpbin-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /headers
+    route:
+    - destination:
+        port:
+          number: 8000
+        host: httpbin
+EOF
+```
+http://$INGRESS_HOST:$INGRESS_PORT/headers
+
 * Bookinfo sample delete
 ```
 kubectl delete -f samples/bookinfo/platform/kube/bookinfo.yaml
 // kubectl delete -f install/kubernetes/istio-demo-auth.yaml
+kubectl delete gateway httpbin-gateway
+kubectl delete virtualservice httpbin
+kubectl delete --ignore-not-found=true -f samples/httpbin/httpbin.yaml
 ```

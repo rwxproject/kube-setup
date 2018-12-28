@@ -9,3 +9,8 @@ mv linux-amd64/helm /usr/local/bin/helm
 ```
 helm init
 ```
+# install helm repos
+```
+helm repo add incubator https://kubernetes-charts-incubator.storage.googleapis.com/
+helm repo add confluent https://confluentinc.github.io/cp-helm-charts/
+```

@@ -1,0 +1,12 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: server-cluster-ip-service
+  namespace: webapp
+spec:
+  type: ClusterIP
+  selector:
+    component: server
+  ports:
+  - port: 3000
+    targetPort: 3000

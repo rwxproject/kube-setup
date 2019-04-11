@@ -2,9 +2,9 @@
 Install Istio 
 ```
 curl -L https://git.io/getLatestIstio | sh -
-cp istio-1.0.5/bin/istioctl /usr/local/bin/
-cd istio-1.0.5/
-kubectl apply -f install/kubernetes/helm/istio/templates/crds.yaml
+cp istio-1.1.2bin/istioctl /usr/local/bin/
+cd istio-1.1.2/
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
 kubectl apply -f install/kubernetes/istio-demo-auth.yaml
 ```
 Confirm istio namespace resources being created (istio-system)

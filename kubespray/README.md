@@ -36,26 +36,26 @@ git clone https://github.com/kubernetes-sigs/kubespray.git
 cd kubespray
 sudo pip install -r requirements.txt
 ```
-Configure nodes file (hosts.ini)
+Configure nodes file (hosts.yaml)
 ```
 cp -rfp inventory/sample inventory/appcluster
 declare -a IPS=(172.16.1.211 172.16.1.212 172.16.1.213)
-CONFIG_FILE=inventory/appcluster/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+CONFIG_FILE=inventory/appcluster/hosts.yaml python3 contrib/inventory_builder/inventory.py ${IPS[@]}
 
-cat inventory/appcluster/hosts.ini
+cat inventory/appcluster/hosts.yaml
 ```
 Basic node config
 ```
-ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+ansible all -i inventory/appcluster/hosts.yaml -m shell -a \
   'sudo sysctl -w net.ipv4.ip_forward=1'
 
-ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+ansible all -i inventory/appcluster/hosts.yaml -m shell -a \
   'sudo systemctl stop firewalld && \
    sudo systemctl disable firewalld && \
    sudo systemctl mask firewalld && \
    sudo yum remove -y firewalld'
 
-ansible all -i inventory/appcluster/hosts.ini -m shell -a \
+ansible all -i inventory/appcluster/hosts.yaml -m shell -a \
   'SWAP=$(cat /etc/fstab | grep swap | sed "s/ .*//") && \
    sudo swapoff -v $SWAP && \
    sudo sed -i "/swap/d" /etc/fstab && \
@@ -63,7 +63,7 @@ ansible all -i inventory/appcluster/hosts.ini -m shell -a \
 ```
 Deploy Kubernetes
 ```
-ansible-playbook -i inventory/appcluster/hosts.ini cluster.yml -b -v \
+ansible-playbook -i inventory/appcluster/hosts.yaml cluster.yml -b -v \
   --private-key=~/.ssh/private_key
 ```
 Install kubectl
